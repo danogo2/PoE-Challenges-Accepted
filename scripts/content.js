@@ -119,6 +119,7 @@
       ['atlas'],
     ],
     updatedDefaultTags: new Set(),
+    pinOrdersSet: new Set([0]),
   };
 
   const checkDefaultTagsForDuplicates = () => {
@@ -256,6 +257,14 @@
       `<div class="settings-option"><button class='button-settings button-import'><div class="settings-icon icon-import" title="import tags and notes">${svgIconImport}</div></button></div>`
     );
     return parentEl.querySelector('.button-import');
+  };
+
+  const insertPinButtonEl = parentEl => {
+    parentEl.insertAdjacentHTML(
+      'afterbegin',
+      `<button class='button-settings button-pin' title="pin challenge to the top"><div class="settings-icon icon-pin" ></div></button>`
+    );
+    return parentEl.querySelector('.button-pin');
   };
 
   const insertTagSelectEl = parentEl => {
@@ -629,6 +638,7 @@
   };
 
   const changeChallStyle = (id, challEl) => {
+    challEl.setAttribute('data-id', id);
     // create header
     const headerEl = challEl.querySelector('h2');
     headerEl.classList.add('challenge-header-text');
@@ -672,6 +682,8 @@
       detailEl.querySelector('.text').classList.add('inner-block');
       insertNoteTextareaEl(detailInnerEl, id);
     }
+    // add pin button
+    const pinButtonEl = insertPinButtonEl(headerContainerEl);
   };
 
   const updateDisplayedTagsHTML = (tagDisplayEl, challObj) => {
@@ -918,6 +930,34 @@
     updateLS();
   };
 
+  const pinChallengeHandler = event => {
+    const target = event.target;
+    const challEl = target.closest('.achievement');
+    const button = target.closest('.button-pin');
+    console.log(button);
+    const id = Number(challEl.dataset.id);
+    const challObj = state.challObjMap.get(id);
+    console.log('id', id);
+    console.log('challObj', challObj);
+
+    if (challEl.classList.contains('pinned')) {
+      challEl.classList.remove('pinned');
+      state.pinOrdersSet.delete(challObj.order);
+      challObj.order = 0;
+      challEl.style.order = 0;
+      button.setAttribute('title', 'pin challenge to the top');
+    } else {
+      const minCurOrder = Math.min(...state.pinOrdersSet);
+      const newMinOrder = minCurOrder - 1;
+      challObj.order = newMinOrder;
+      challEl.style.order = newMinOrder;
+      state.pinOrdersSet.add(newMinOrder);
+      challEl.classList.add('pinned');
+      button.setAttribute('title', 'unpin this challenge');
+    }
+    console.log(state.pinOrdersSet);
+  };
+
   const delegateEventHandlers = () => {
     const challsContainerEl = document.querySelector('.achievement-list');
     challsContainerEl.addEventListener('change', event => {
@@ -950,6 +990,13 @@
         target.classList.contains('display-tag')
       ) {
         clickTagDisplayHandler(event);
+      }
+
+      if (
+        target.closest('.button-pin')?.classList.contains('button-pin') ||
+        target.classList.contains('icon-pin')
+      ) {
+        pinChallengeHandler(event);
       }
     });
   };
