@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PoE Challenges Accepted",
-  "description": "PoE Challenges Accepted extension enhances the Path of Exile challenges website by providing a compact layout, search functionality, customizable challenge tags, note-taking capabilities, and a hide/show button for completed challenges.",
+  "description": "Path of Exile challenges enhanced with a compact layout, search, tags, notes, and hide/show button for completed tasks.",
   "version": "1.0.0",
   "icons": {
     "16": "images/icon-16.png",
