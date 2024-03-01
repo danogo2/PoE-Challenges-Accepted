@@ -37,6 +37,8 @@
   width: 100%;
   margin-top: 6px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .poe-ca .profile .profile-container .container-top {
@@ -356,6 +358,7 @@ option.tag-custom {
   width: 100%;
   background-size: 100% 40px;
   min-height: auto;
+  background-image: url('chrome-extension://mpmdcmepooajobneaonkknpbcogflnbd/images/achievement-background-header-40px-height.png');
 }
 
 .poe-ca .achievement-header {
@@ -365,6 +368,7 @@ option.tag-custom {
   font-size: 11px;
   height: 40px;
   gap: 10px;
+  position: relative;
 }
 
 .poe-ca
@@ -377,10 +381,11 @@ option.tag-custom {
   display: flex;
   align-items: center;
   text-wrap: nowrap;
-  padding: 6px 0 6px 80px;
+  padding: 6px 0 6px 46px;
   font-size: 17px;
   height: 70%;
   box-sizing: border-box;
+  line-height: 100%;
 }
 
 .poe-ca
@@ -408,7 +413,7 @@ option.tag-custom {
   height: 40px;
   display: flex;
   align-items: center;
-  padding-right: 26px;
+  padding-right: 12px;
 }
 /* challenge tag input */
 .input-tag,
@@ -475,7 +480,7 @@ option.tag-custom {
   .achievement-list
   .achievement
   .detail-inner {
-  padding-left: 80px;
+  padding-left: 46px;
   padding-top: 20px;
   padding-bottom: 20px;
   padding-right: 26px;
@@ -586,6 +591,23 @@ option.tag-custom {
 
 .inner-block {
   display: block;
+}
+
+/* pin button */
+.button-pin {
+  position: absolute;
+  left: 6px;
+  top: 47px;
+  cursor: pointer;
+}
+
+.icon-pin {
+  background: url('/protected/image/profile/pin.png?v=1704855262241&key=tykl7Tu2KU_IrT4pdmkLxA')
+    no-repeat center;
+}
+
+.pinned .icon-pin {
+  transform: rotate(35deg);
 }
 
 /* hide elements */

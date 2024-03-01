@@ -17,5 +17,11 @@
       "css": ["styles.css"],
       "js": ["scripts/content.js"]
     }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["images/achievement-background-header-40px-height.png"],
+      "matches": ["https://www.pathofexile.com/*"]
+    }
   ]
 }
