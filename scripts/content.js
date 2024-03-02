@@ -772,6 +772,7 @@
       note: '',
       defaultTags: challDefaultTags,
       tags: [...createTagObjectsFromArr(challDefaultTags, 'default')], // eg. tag objects {name: 'boss', type: 'default' || 'custom'}
+      order: 0,
     };
     state.challObjMap.set(id, newChallObj);
     // add default tags to chall tag display when there is no local storage fetch
@@ -807,6 +808,15 @@
 
   const updateChallEl = (id, challEl) => {
     const challObj = state.challObjMap.get(id);
+    // change order if was pinned
+    const challOrder = Number(challObj.order);
+    if (challOrder !== 0) {
+      challEl.style.order = challOrder;
+      challEl.classList.add('pinned');
+      state.pinOrdersSet.add(challOrder);
+      const pinButton = challEl.querySelector('.button-pin');
+      pinButton.setAttribute('title', 'unpin this challenge');
+    }
     // in case they are changing challenge text
     const challengeName = challEl.querySelector('h2').textContent;
     challObj.name = challengeName;
@@ -934,11 +944,8 @@
     const target = event.target;
     const challEl = target.closest('.achievement');
     const button = target.closest('.button-pin');
-    console.log(button);
     const id = Number(challEl.dataset.id);
     const challObj = state.challObjMap.get(id);
-    console.log('id', id);
-    console.log('challObj', challObj);
 
     if (challEl.classList.contains('pinned')) {
       challEl.classList.remove('pinned');
@@ -955,7 +962,7 @@
       challEl.classList.add('pinned');
       button.setAttribute('title', 'unpin this challenge');
     }
-    console.log(state.pinOrdersSet);
+    updateLS();
   };
 
   const delegateEventHandlers = () => {

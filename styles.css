@@ -604,10 +604,11 @@ option.tag-custom {
 .icon-pin {
   background: url('/protected/image/profile/pin.png?v=1704855262241&key=tykl7Tu2KU_IrT4pdmkLxA')
     no-repeat center;
+  filter: grayscale(1);
 }
 
 .pinned .icon-pin {
-  transform: rotate(35deg);
+  filter: none;
 }
 
 /* hide elements */
