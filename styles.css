@@ -371,6 +371,13 @@ option.tag-custom {
   position: relative;
 }
 
+.poe-ca .achievement.pinned.bounce {
+  animation-name: pin-bounce;
+  animation-timing-function: ease;
+  animation-duration: 0.5s;
+  z-index: 2;
+}
+
 .poe-ca
   .profile
   .profile-container
@@ -638,4 +645,18 @@ option.tag-custom {
 .tag-hidden,
 .hide-completed .achievement:not(.incomplete) {
   display: none;
+}
+
+/* Animations */
+
+@keyframes pin-bounce {
+  0% {
+    transform: translateY(200px);
+  }
+  70% {
+    transform: translateY(-50px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }

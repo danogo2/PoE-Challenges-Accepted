@@ -949,6 +949,7 @@
 
     if (challEl.classList.contains('pinned')) {
       challEl.classList.remove('pinned');
+      challEl.classList.remove('bounce');
       state.pinOrdersSet.delete(challObj.order);
       challObj.order = 0;
       challEl.style.order = 0;
@@ -961,6 +962,10 @@
       state.pinOrdersSet.add(newMinOrder);
       challEl.classList.add('pinned');
       button.setAttribute('title', 'unpin this challenge');
+      challEl.classList.add('bounce');
+      setTimeout(() => {
+        challEl.classList.remove('bounce');
+      }, 500);
     }
     updateLS();
   };
