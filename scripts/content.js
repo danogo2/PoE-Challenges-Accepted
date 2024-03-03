@@ -120,6 +120,7 @@
     ],
     updatedDefaultTags: new Set(),
     pinOrdersSet: new Set([0]),
+    hideNotes: false,
   };
 
   const checkDefaultTagsForDuplicates = () => {
@@ -170,6 +171,7 @@
       state.hasPoeInLS = true;
       const poeStateLS = JSON.parse(poeLS);
       if (!poeStateLS[state.league]) {
+        //if has poe but not currently selected league league
         state.leagueStateGotLoaded = false;
         return;
       }
@@ -185,23 +187,32 @@
           state.defaultTags
         );
       }
+      // fallback for user who don't have notes state saved in LS
+      if (poeStateLS.hideNotes) {
+        state.hideNotes = poeStateLS.hideNotes === 'false' ? false : true;
+      }
     }
   };
 
   const updateLS = () => {
+    const currentPoeState = {
+      hideNotes: JSON.stringify(state.hideNotes),
+    };
     const currentLeagueState = {
       challsArrayLS: JSON.stringify(Array.from(state.challObjMap)),
       defaultTagsLS: JSON.stringify(state.defaultTags),
     };
+    currentPoeState[state.league] = currentLeagueState;
     if (state.hasPoeInLS) {
-      const stateLS = JSON.parse(localStorage.getItem('poe'));
-      stateLS[state.league] = currentLeagueState;
-      localStorage.setItem('poe', JSON.stringify(stateLS));
+      const poeStateLS = JSON.parse(localStorage.getItem('poe'));
+      const newPoeState = Object.assign(poeStateLS, currentPoeState);
+      localStorage.setItem('poe', JSON.stringify(newPoeState));
     } else {
       localStorage.setItem(
         'poe',
         JSON.stringify({
           [state.league]: currentLeagueState,
+          hideNotes: JSON.stringify(state.hideNotes),
         })
       );
     }
@@ -398,9 +409,12 @@
     const sideNotesEl = event.target.closest('.side-notes');
     if (sideNotesEl.classList.contains('hide-notes')) {
       sideNotesEl.classList.remove('hide-notes');
+      state.hideNotes = false;
     } else {
+      state.hideNotes = true;
       sideNotesEl.classList.add('hide-notes');
     }
+    updateLS();
   };
 
   const clickToggleSideNotesPosition = event => {
@@ -430,10 +444,12 @@
   const createSideNotes = () => {
     document.querySelector('body').insertAdjacentHTML(
       'beforeend',
-      `<div class='side-notes'>
+      `<div class='side-notes ${state.hideNotes ? 'hide-notes' : ''}'>
         <div class="side-nav">
           <div class="settings-option"><button class="button-settings toggle-view"><div class="settings-icon icon-minimize" title="hide side-notes">${svgIconMinimize}</div><div class="settings-icon icon-show-notes" title="show side-notes">${svgIconNotePen}</div></button></div>
-          <h2 class="side-header" title="scroll to the top">${state.league} league notes</h2>
+          <h2 class="side-header" title="scroll to the top">${
+            state.league
+          } league notes</h2>
           <div class="settings-option"><button class="button-settings toggle-side"><div class="settings-icon arrow-right" title="show on the right">${svgIconArrowR}</div><div class="settings-icon arrow-left" title="show on the left">${svgIconArrowL}</div></button></div>
         </div>
         <ul class='side-challenges'></ul>
