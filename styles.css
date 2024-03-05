@@ -140,6 +140,7 @@ option.tag-custom {
   color: rgb(190, 182, 152);
 }
 
+/* side notes */
 .side-notes {
   /* 17px is a scrollbar width */
   max-height: 100vh;
@@ -608,14 +609,70 @@ option.tag-custom {
   cursor: pointer;
 }
 
+.button-pin:active {
+  transform: scale(0.8);
+}
+
 .icon-pin {
   background: url('/protected/image/profile/pin.png?v=1704855262241&key=tykl7Tu2KU_IrT4pdmkLxA')
     no-repeat center;
-  filter: grayscale(1);
+  filter: grayscale(1) opacity(0.55);
+  height: 100%;
 }
 
 .pinned .icon-pin {
-  filter: none;
+  filter: saturate(2);
+}
+
+.icon-pin:hover {
+  filter: opacity(1) grayscale(1);
+}
+
+/* menu button */
+.icon-menu svg {
+  height: 100%;
+}
+
+.menu-dialog {
+  z-index: 10;
+  margin: 0;
+  background-color: rgba(24, 24, 24, 0.94);
+  color: #beb698;
+  border: 2px solid #282828;
+  border-radius: 6px;
+  top: 45px;
+  left: 573px;
+  padding: 10px 0;
+}
+
+.sticky .menu-dialog {
+  top: 47px;
+}
+
+.menu-option:not(:last-child) {
+  margin-bottom: 6px;
+}
+
+.menu-dialog .button-settings {
+  gap: 12px;
+  padding: 8px 16px;
+  width: 100%;
+}
+
+.menu-dialog .button-settings:hover {
+  background-color: #444;
+  filter: brightness(1);
+}
+
+.menu-dialog .settings-icon {
+  width: 14px;
+  height: 14px;
+  cursor: default;
+}
+
+.menu-text {
+  color: #beb698;
+  font-size: 13px;
 }
 
 /* hide elements */
@@ -654,7 +711,7 @@ option.tag-custom {
     transform: translateY(200px);
   }
   70% {
-    transform: translateY(-50px);
+    transform: translateY(-30px);
   }
   100% {
     transform: translateY(0);
