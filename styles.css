@@ -12,8 +12,18 @@
   display: block;
   align-self: center;
   margin: 0;
-  flex-grow: 1;
   text-align: right;
+  background-color: rgba(42, 42, 42, 0.9);
+  border: 3px solid #1d1d1c;
+  border-image: url(/protected/image/border/border1.png?v=1704855224122&key=DPRxGBu6U2K_Mk-O2PTPUg)
+    3 3 3 3 repeat;
+  color: #beb698;
+  box-sizing: border-box;
+  padding: 3px;
+  font-size: 0.8rem;
+  max-width: 160px;
+  height: 100%;
+  font-weight: bold;
 }
 
 .poe-ca .profile .title-bar::first-letter {
@@ -85,6 +95,12 @@
   padding: 5px 0;
   gap: 2%;
   align-items: stretch;
+  justify-content: space-between;
+}
+
+.settings > div {
+  display: flex;
+  gap: 10px;
 }
 
 .sticky .settings {
@@ -344,11 +360,6 @@ option.tag-custom {
   width: 20px;
 }
 
-.icon-import svg,
-.icont-export svg {
-  height: 21px;
-}
-
 /* challenge box */
 .poe-ca
   .profile
@@ -359,7 +370,7 @@ option.tag-custom {
   width: 100%;
   background-size: 100% 40px;
   min-height: auto;
-  background-image: url('chrome-extension://mpmdcmepooajobneaonkknpbcogflnbd/images/achievement-background-header-40px-height.png');
+  background-image: url('chrome-extension://dnamgoojlflbhajmclnaconemdcddejp/images/achievement-bg.png');
 }
 
 .poe-ca .achievement-header {
@@ -609,7 +620,7 @@ option.tag-custom {
   cursor: pointer;
 }
 
-.button-pin:active {
+.button-pin:active .icon-pin {
   transform: scale(0.8);
 }
 
@@ -620,16 +631,24 @@ option.tag-custom {
   height: 100%;
 }
 
-.pinned .icon-pin {
-  filter: saturate(2);
-}
-
 .icon-pin:hover {
   filter: opacity(1) grayscale(1);
 }
 
+.pinned .icon-pin {
+  filter: saturate(2);
+}
+
+.pinned .icon-pin:hover {
+  filter: opacity(1) grayscale(0.3);
+}
+
 /* menu button */
-.icon-menu svg {
+.icon-menu svg,
+.icon-import svg,
+.icon-export svg,
+.icon-clear svg {
+  width: 100%;
   height: 100%;
 }
 
@@ -641,12 +660,14 @@ option.tag-custom {
   border: 2px solid #282828;
   border-radius: 6px;
   top: 45px;
-  left: 573px;
+  left: calc(100% - 188.48px);
   padding: 10px 0;
+  box-sizing: border-box;
 }
 
 .sticky .menu-dialog {
   top: 47px;
+  left: 589.1875px;
 }
 
 .menu-option:not(:last-child) {
