@@ -35,6 +35,9 @@
   const svgIconMenu =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#beb698" d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"/></svg>';
 
+  const svgIconCoffee =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#beb698" d="M88 0C74.7 0 64 10.7 64 24c0 38.9 23.4 59.4 39.1 73.1l1.1 1C120.5 112.3 128 119.9 128 136c0 13.3 10.7 24 24 24s24-10.7 24-24c0-38.9-23.4-59.4-39.1-73.1l-1.1-1C119.5 47.7 112 40.1 112 24c0-13.3-10.7-24-24-24zM32 192c-17.7 0-32 14.3-32 32V416c0 53 43 96 96 96H288c53 0 96-43 96-96h16c61.9 0 112-50.1 112-112s-50.1-112-112-112H352 32zm352 64h16c26.5 0 48 21.5 48 48s-21.5 48-48 48H384V256zM224 24c0-13.3-10.7-24-24-24s-24 10.7-24 24c0 38.9 23.4 59.4 39.1 73.1l1.1 1C232.5 112.3 240 119.9 240 136c0 13.3 10.7 24 24 24s24-10.7 24-24c0-38.9-23.4-59.4-39.1-73.1l-1.1-1C231.5 47.7 224 40.1 224 24z"/></svg>';
+
   // ==================== STATE ====================
   // decodeURIComponent is necessary for leagues separated by /
   const state = {
@@ -127,7 +130,6 @@
       }
       state.leagueStateGotLoaded = true;
       const leagueStateLS = poeStateLS[state.league];
-      const { defaultTagsLS } = poeStateLS;
       const { challsArrayLS } = leagueStateLS;
       if (challsArrayLS) {
         const challsArray = JSON.parse(challsArrayLS);
@@ -175,7 +177,7 @@
   const insertHideButtonEl = parentEl => {
     parentEl.insertAdjacentHTML(
       'beforeend',
-      `<div class="settings-option"><button class='button-settings button-hide'><div class="settings-icon icon-hide" title="Hide completed challenges">${svgIconEye}</div><div class="settings-icon icon-show" title="show completed">${svgIconEyeOff}</div></button></div>`
+      `<div class="settings-option"><button class='button-settings button-hide'><div class="settings-icon icon-hide" title="Hide completed challenges">${svgIconEye}</div><div class="settings-icon icon-show" title="Show completed challenges">${svgIconEyeOff}</div></button></div>`
     );
     return parentEl.querySelector('.button-hide');
   };
@@ -202,6 +204,14 @@
       `<div class="menu-option"><button class='button-settings button-import'><div class="settings-icon icon-import">${svgIconImport}</div><div class="menu-text">Import tags and notes</div></button></div>`
     );
     return parentEl.querySelector('.button-import');
+  };
+
+  const insertCoffeeButtonEl = parentEl => {
+    parentEl.insertAdjacentHTML(
+      'beforeend',
+      `<div class="menu-option"><a href="https://www.paypal.com/paypalme/danogo92" target="_blank" class='button-settings button-coffee'><div class="settings-icon icon-coffee">${svgIconCoffee}</div><div  class="menu-text">Buy me a coffee</div></a></div>`
+    );
+    return parentEl.querySelector('.button-coffee');
   };
 
   const insertPinButtonEl = parentEl => {
@@ -247,7 +257,7 @@
   const insertMenuButtonEl = parentEl => {
     parentEl.insertAdjacentHTML(
       'beforeend',
-      `<div class="settings-option"><button class='button-settings button-menu'><div class="settings-icon icon-menu" title="More Actions...">${svgIconMenu}</div></button></div>`
+      `<div class="settings-option"><button class='button-settings button-menu'><div class="settings-icon icon-menu" title="More actions">${svgIconMenu}</div></button></div>`
     );
     return parentEl.querySelector('.button-menu');
   };
@@ -578,23 +588,24 @@
     infoEl.textContent = '';
     infoEl.insertAdjacentHTML('beforeend', '<div class="settings"></div>');
     const settingsEl = infoEl.querySelector('.settings');
+    titleEl.textContent = titleEl.textContent.match(/\d+/g).join('/');
+    const searchInputEl = insertSearchInputEl(settingsEl);
+    const tagSelectEl = insertTagSelectEl(settingsEl);
+    settingsEl.insertAdjacentElement('beforeend', leagueSelectEl);
     settingsEl.insertAdjacentHTML(
       'beforeend',
-      '<div class="left"></div><div class="right"></div>'
+      '<div class="settings-option title-container"></div>'
     );
-    const settingsLeftEl = settingsEl.querySelector('.left');
-    const settingsRightEl = settingsEl.querySelector('.right');
-    const searchInputEl = insertSearchInputEl(settingsLeftEl);
-    const tagSelectEl = insertTagSelectEl(settingsLeftEl);
-    settingsLeftEl.insertAdjacentElement('beforeend', leagueSelectEl);
-    titleEl.textContent = '✓ ' + titleEl.textContent.match(/\d+/g).join('/');
-    settingsLeftEl.insertAdjacentElement('beforeend', titleEl);
-    const hideButtonEl = insertHideButtonEl(settingsRightEl);
-    const menuButtonEl = insertMenuButtonEl(settingsRightEl);
-    const menuDialogEl = insertMenuDialogEl(settingsRightEl);
+    settingsEl
+      .querySelector('.title-container')
+      .insertAdjacentElement('beforeend', titleEl);
+    const hideButtonEl = insertHideButtonEl(settingsEl);
+    const menuButtonEl = insertMenuButtonEl(settingsEl);
+    const menuDialogEl = insertMenuDialogEl(settingsEl);
     const importButtonEl = insertImportButtonEl(menuDialogEl);
     const exportButtonEl = insertExportButtonEl(menuDialogEl);
     const clearButtonEl = insertClearButtonEl(menuDialogEl);
+    const coffeeButtonEl = insertCoffeeButtonEl(menuDialogEl);
 
     addEventHandler(searchInputEl, 'input', searchChallHandler);
     addEventHandler(searchInputEl, 'change', formatSearchInputHandler);
