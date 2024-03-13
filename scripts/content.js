@@ -148,26 +148,27 @@
       if (!poeStateLS[state.league]) {
         //if has poe but not currently selected league league
         state.leagueStateGotLoaded = false;
-        return;
-      }
-      state.leagueStateGotLoaded = true;
-      const leagueStateLS = poeStateLS[state.league];
-      const { challsArrayLS } = leagueStateLS;
-      if (challsArrayLS) {
-        const challsArray = JSON.parse(challsArrayLS);
-        state.challObjMap = new Map(challsArray);
-        saveItemToStorage(state.league, { challenges: challsArray });
-      }
+      } else {
+        state.leagueStateGotLoaded = true;
+        const leagueStateLS = poeStateLS[state.league];
+        const { challsArrayLS } = leagueStateLS;
+        if (challsArrayLS) {
+          const challsArray = JSON.parse(challsArrayLS);
+          state.challObjMap = new Map(challsArray);
+          saveItemToStorage(state.league, { challenges: challsArray });
+        }
 
-      // fallback for user who don't have notes state saved in LS
-      if (poeStateLS.hideNotes) {
-        state.sideNotes.hide = poeStateLS.hideNotes === 'false' ? false : true;
-        saveItemToStorage(
-          'sideNotes',
-          poeStateLS.hideNotes === 'false'
-            ? { hide: false, side: state.sideNotes.side }
-            : { hide: true, side: state.sideNotes.side }
-        );
+        // fallback for user who don't have notes state saved in LS
+        if (poeStateLS.hideNotes) {
+          state.sideNotes.hide =
+            poeStateLS.hideNotes === 'false' ? false : true;
+          saveItemToStorage(
+            'sideNotes',
+            poeStateLS.hideNotes === 'false'
+              ? { hide: false, side: state.sideNotes.side }
+              : { hide: true, side: state.sideNotes.side }
+          );
+        }
       }
       localStorage.removeItem('poe');
     } else {

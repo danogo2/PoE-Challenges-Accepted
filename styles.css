@@ -217,7 +217,7 @@ option.tag-custom {
   display: flex;
   justify-content: space-between;
   background-color: #282828;
-  padding: 12px;
+  padding: 10px 12px;
   align-items: center;
 }
 
@@ -230,8 +230,20 @@ option.tag-custom {
   height: 18px;
 }
 
+.hide-notes .side-nav {
+  padding: 0;
+}
+
+.hide-notes .button-settings.toggle-view {
+  padding: 10px 12px;
+}
+
+.button-settings.toggle-view {
+  cursor: pointer;
+}
+
 .side-header {
-  font-size: 18px;
+  font-size: 16px;
   text-align: center;
 }
 
@@ -686,6 +698,7 @@ option.tag-custom {
 .menu-dialog .button-settings:hover {
   background-color: #444;
   filter: brightness(1);
+  cursor: pointer;
 }
 
 .menu-dialog .settings-icon {
