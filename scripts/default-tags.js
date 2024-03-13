@@ -4,17 +4,19 @@ const fetchDefaultTags = async () => {
     // Handle the retrieved data
     if (response?.data) {
       // Do something with the data (e.g., update the page)
-      chrome.runtime.sendMessage({
-        action: 'saveItemToStorage',
-        data: { key: 'defaultTags', value: response.data },
-      });
+      chrome.runtime.sendMessage(
+        {
+          action: 'saveItem',
+          data: { key: 'defaultTags', value: response.data },
+        },
+        function (response) {
+          console.log(response.message);
+        }
+      );
     } else {
       console.log('Data not found.');
-      return null;
     }
   });
-  // state.defaultTags = defaultTags;
-  // checkDefaultTagsForDuplicates();
 };
 
 const checkDefaultTagsForDuplicates = () => {
@@ -71,7 +73,7 @@ const clearAllData = () => {
 const getAllItems = () => {
   chrome.runtime.sendMessage({ action: 'getAllItems' }, function (response) {
     if (response.success) {
-      console.log('All items retrieved:');
+      console.log('All items retrieved:', response);
       // Handle the retrieved data (e.g., update the page)
     } else {
       console.log('Error retrieving items.');
@@ -79,6 +81,4 @@ const getAllItems = () => {
   });
 };
 
-// clearAllData();
-// getAllItems();
 checkLastFetchTimestamp();

@@ -65,6 +65,13 @@
     });
   };
 
+  const updateChallenges = () => {
+    for (let [index, challEl] of state.challElMap.entries()) {
+      const id = Number(index);
+      updateChallEl(id, challEl);
+    }
+  };
+
   const updateState = data => {
     const { sideNotes, defaultTags } = data;
     if (sideNotes) {
@@ -78,20 +85,35 @@
         ? sideNotesEl.classList.add('right')
         : sideNotesEl.classList.remove('right');
     }
-    if (defaultTags) {
-      state.defaultTags = defaultTags;
-    }
+
     const leagueState = data[state.league];
     if (leagueState) {
       state.challObjMap = new Map(leagueState.challenges);
       state.leagueStateGotLoaded = true;
     }
-    for (let [index, challEl] of state.challElMap.entries()) {
-      const id = Number(index);
-      updateChallEl(id, challEl);
-    }
 
-    updateTagsDropdownHTML();
+    if (defaultTags) {
+      state.defaultTags = defaultTags;
+      updateChallenges();
+      updateTagsDropdownHTML();
+    } else {
+      chrome.runtime.sendMessage(
+        { action: 'fetchTagsJSON' },
+        function (response) {
+          if (response?.data) {
+            chrome.runtime.sendMessage({
+              action: 'saveItem',
+              data: { key: 'defaultTags', value: response.data },
+            });
+            state.defaultTags = response.data;
+            updateChallenges();
+            updateTagsDropdownHTML();
+          } else {
+            console.log('Data not found.');
+          }
+        }
+      );
+    }
   };
 
   const getStateFromChromeStorage = keys => {
@@ -217,7 +239,7 @@
   const insertPinButtonEl = parentEl => {
     parentEl.insertAdjacentHTML(
       'afterbegin',
-      `<button class='button-settings button-pin' title="pin challenge to the top"><div class="settings-icon icon-pin" ></div></button>`
+      `<button class='button-settings button-pin' title="Pin challenge to the top"><div class="settings-icon icon-pin" ></div></button>`
     );
     return parentEl.querySelector('.button-pin');
   };
@@ -843,7 +865,7 @@
       challEl.classList.add('pinned');
       state.pinOrdersSet.add(challOrder);
       const pinButton = challEl.querySelector('.button-pin');
-      pinButton.setAttribute('title', 'unpin this challenge');
+      pinButton.setAttribute('title', 'Unpin this challenge');
     }
     // in case they are changing challenge text
     const challengeName = challEl.querySelector('h2').textContent;
@@ -973,7 +995,7 @@
       state.pinOrdersSet.delete(challObj.order);
       challObj.order = 0;
       challEl.style.order = 0;
-      button.setAttribute('title', 'pin challenge to the top');
+      button.setAttribute('title', 'Pin challenge to the top');
     } else {
       const minCurOrder = Math.min(...state.pinOrdersSet);
       const newMinOrder = minCurOrder - 1;
@@ -981,7 +1003,7 @@
       challEl.style.order = newMinOrder;
       state.pinOrdersSet.add(newMinOrder);
       challEl.classList.add('pinned');
-      button.setAttribute('title', 'unpin this challenge');
+      button.setAttribute('title', 'Unpin this challenge');
       challEl.classList.add('bounce');
       setTimeout(() => {
         challEl.classList.remove('bounce');
