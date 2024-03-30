@@ -331,7 +331,7 @@
   };
 
   // need to run on every tag input change
-  const updateTagsDropdownHTML = () => {
+  const updateTagsDropdownHTML = (hideHiddenTags = false) => {
     // has to run after changing tag inputs
     const selectEl = document.querySelector('.tag-select');
     removeAllChildNodes(selectEl);
@@ -345,6 +345,7 @@
       aObj.name.localeCompare(bObj.name)
     );
 
+    // add HTML
     for (let tagObj of sortedTagsArray) {
       selectEl.insertAdjacentHTML(
         'beforeend',
@@ -562,9 +563,11 @@
     if (state.hideCompleted) {
       challengeContainerEl.classList.add('hide-completed');
       sideNotesEl.classList.add('hide-completed');
+      updateTagsDropdownHTML(true);
     } else {
       challengeContainerEl.classList.remove('hide-completed');
       sideNotesEl.classList.remove('hide-completed');
+      updateTagsDropdownHTML();
     }
   };
 
@@ -1138,7 +1141,6 @@
       async function (response) {
         // Handle the retrieved data
         if (response.success) {
-          console.log(response.items);
           const stateString = JSON.stringify(response.items);
           const blob = new Blob([btoa(stateString)], { type: 'text/plain' });
           const date = new Date();

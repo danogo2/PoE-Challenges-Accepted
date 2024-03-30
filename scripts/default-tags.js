@@ -57,7 +57,6 @@ const checkLastFetchTimestamp = () => {
     const lastFetchTimestamp = response.lastFetchTimestamp;
     const currentTime = Date.now();
     const timeSinceLastFetch = currentTime - lastFetchTimestamp;
-
     if (timeSinceLastFetch >= 24 * 60 * 60 * 1000) {
       fetchDefaultTags();
     }

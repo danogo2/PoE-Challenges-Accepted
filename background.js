@@ -71,21 +71,18 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 async function fetchDefaultTags(sendResponse) {
   try {
     const response = await fetch(
-      'https://raw.githubusercontent.com/danogo2/PoE-Challenges-Accepted/93bfe565d2e06d0173dfdbe01dd5ad987dbfc00d/json/default_tags.json'
+      'https://raw.githubusercontent.com/danogo2/PoE-Challenges-Accepted/main/json/default_tags.json'
     );
     if (response.status === 200) {
       const data = await response.json();
       // Process the fetched data
       const timestamp = Date.now();
       chrome.storage.local.set({ lastFetchTimestamp: timestamp });
-      console.log(data);
       sendResponse({ data });
     } else {
-      console.error('Error fetching data:', response.status);
       sendResponse({ error: response.status });
     }
   } catch (error) {
-    console.error('Fetch error:', error);
     sendResponse({ error });
   }
 }
