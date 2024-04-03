@@ -331,7 +331,7 @@
   };
 
   // need to run on every tag input change
-  const updateTagsDropdownHTML = (hideHiddenTags = false) => {
+  const updateTagsDropdownHTML = () => {
     // has to run after changing tag inputs
     const selectEl = document.querySelector('.tag-select');
     removeAllChildNodes(selectEl);
@@ -345,8 +345,23 @@
       aObj.name.localeCompare(bObj.name)
     );
 
+    // don't display tags that are only present in hidden challenges while they are hidden
+    const hiddenTags = new Set();
+    if (state.hideCompleted) {
+      for (let challObj of state.challObjMap.values()) {
+        if (challObj.isComplete) {
+          for (let tag of challObj.tags) {
+            hiddenTags.add(tag.name);
+          }
+        }
+      }
+    }
+
     // add HTML
     for (let tagObj of sortedTagsArray) {
+      if (state.hideCompleted && hiddenTags.has(tagObj.name)) {
+        continue;
+      }
       selectEl.insertAdjacentHTML(
         'beforeend',
         `<option class="tag-option tag-${tagObj.type}" value="${tagObj.name}">${tagObj.name}</option>`
@@ -563,12 +578,11 @@
     if (state.hideCompleted) {
       challengeContainerEl.classList.add('hide-completed');
       sideNotesEl.classList.add('hide-completed');
-      updateTagsDropdownHTML(true);
     } else {
       challengeContainerEl.classList.remove('hide-completed');
       sideNotesEl.classList.remove('hide-completed');
-      updateTagsDropdownHTML();
     }
+    updateTagsDropdownHTML();
   };
 
   const clickClearButtonHandler = event => {
@@ -826,6 +840,7 @@
       defaultTags: challDefaultTags,
       tags: [...createTagObjectsFromArr(challDefaultTags, 'default')], // eg. tag objects {name: 'boss', type: 'default' || 'custom'}
       order: 0,
+      isComplete: challEl.classList.contains('incomplete') ? false : true,
     };
     state.challObjMap.set(id, newChallObj);
     // add default tags to chall tag display when there is no local storage fetch
@@ -871,6 +886,9 @@
       const pinButton = challEl.querySelector('.button-pin');
       pinButton.setAttribute('title', 'Unpin this challenge');
     }
+    challObj.isComplete = challEl.classList.contains('incomplete')
+      ? false
+      : true;
     // in case they are changing challenge text
     const challengeName = challEl.querySelector('h2').textContent;
     challObj.name = challengeName;
