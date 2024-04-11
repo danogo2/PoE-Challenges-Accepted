@@ -510,6 +510,7 @@
   };
 
   const searchChallHandler = event => {
+    resetTagSelect();
     const searchEl = event.target;
     const searchValue = searchEl.value.toLowerCase();
     let searchValues = '';
@@ -525,6 +526,14 @@
       } else {
         challEl.classList.add('search-hidden');
       }
+    }
+  };
+
+  const resetSearchInput = () => {
+    const searchInputEl = document.querySelector('input.input-search');
+    searchInputEl.value = '';
+    for (let challEl of state.challElMap.values()) {
+      challEl.classList.remove('search-hidden');
     }
   };
 
@@ -550,6 +559,7 @@
   };
 
   const selectTagHandler = event => {
+    resetSearchInput();
     const selectedTagValue = event.target.value;
     const selectedTagIndex = event.target.selectedIndex;
     state.lastSelectedTagValue = selectedTagValue;
@@ -567,6 +577,16 @@
       }
     }
     scrollToTop();
+  };
+
+  const resetTagSelect = () => {
+    const tagSelectEl = document.querySelector('select.tag-select');
+    tagSelectEl.selectedIndex = 0;
+    tagSelectEl.value = '';
+    state.lastSelectedTagValue = '';
+    for (let challEl of state.challElMap.values()) {
+      challEl.classList.remove('tag-hidden');
+    }
   };
 
   const clickHideButtonHandler = event => {
