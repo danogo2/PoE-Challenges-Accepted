@@ -346,12 +346,12 @@
     );
 
     // don't display tags that are only present in hidden challenges while they are hidden
-    const hiddenTags = new Set();
+    const notCompletedTags = new Set();
     if (state.hideCompleted) {
       for (let challObj of state.challObjMap.values()) {
-        if (challObj.isComplete) {
+        if (challObj.isComplete === false) {
           for (let tag of challObj.tags) {
-            hiddenTags.add(tag.name);
+            notCompletedTags.add(tag.name);
           }
         }
       }
@@ -359,13 +359,17 @@
 
     // add HTML
     for (let tagObj of sortedTagsArray) {
-      if (state.hideCompleted && hiddenTags.has(tagObj.name)) {
-        continue;
+      if (state.hideCompleted && notCompletedTags.has(tagObj.name)) {
+        selectEl.insertAdjacentHTML(
+          'beforeend',
+          `<option class="tag-option tag-${tagObj.type}" value="${tagObj.name}">${tagObj.name}</option>`
+        );
+      } else if (!state.hideCompleted) {
+        selectEl.insertAdjacentHTML(
+          'beforeend',
+          `<option class="tag-option tag-${tagObj.type}" value="${tagObj.name}">${tagObj.name}</option>`
+        );
       }
-      selectEl.insertAdjacentHTML(
-        'beforeend',
-        `<option class="tag-option tag-${tagObj.type}" value="${tagObj.name}">${tagObj.name}</option>`
-      );
     }
     let selectedTagIndex;
 
@@ -590,7 +594,7 @@
   };
 
   const clickHideButtonHandler = event => {
-    state.hideCompleted = !state.hideCompleted;
+    state.hideCompleted = state.hideCompleted === false ? true : false;
     const challengeContainerEl = document.querySelector(
       '.achievement-container'
     );
