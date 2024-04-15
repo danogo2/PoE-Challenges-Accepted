@@ -298,6 +298,7 @@ option.tag-custom {
   display: flex;
   cursor: pointer;
   align-items: center;
+  margin-bottom: 2px;
 }
 
 .side-challenge-header:hover {
@@ -491,6 +492,38 @@ option.tag-custom {
 
 .input-tag::placeholder {
   color: #beb69888;
+}
+
+.subtask-icon svg {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  left: -35px;
+  cursor: pointer;
+}
+
+.subtask-icon:hover {
+  filter: brightness(0.9);
+}
+
+.sub-pinned .subtask-icon.plus,
+.subtask-icon.minus {
+  display: none;
+}
+
+.sub-pinned .subtask-icon.minus {
+  display: block;
+}
+
+.side-subtask {
+  font-size: 11px;
+  color: #989898;
+  padding: 1px 0px;
+  position: relative;
+}
+
+.side-subtask.complete {
+  color: #00d500cc;
 }
 
 /* unhide challenge details */

@@ -38,6 +38,12 @@
   const svgIconCoffee =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#beb698" d="M88 0C74.7 0 64 10.7 64 24c0 38.9 23.4 59.4 39.1 73.1l1.1 1C120.5 112.3 128 119.9 128 136c0 13.3 10.7 24 24 24s24-10.7 24-24c0-38.9-23.4-59.4-39.1-73.1l-1.1-1C119.5 47.7 112 40.1 112 24c0-13.3-10.7-24-24-24zM32 192c-17.7 0-32 14.3-32 32V416c0 53 43 96 96 96H288c53 0 96-43 96-96h16c61.9 0 112-50.1 112-112s-50.1-112-112-112H352 32zm352 64h16c26.5 0 48 21.5 48 48s-21.5 48-48 48H384V256zM224 24c0-13.3-10.7-24-24-24s-24 10.7-24 24c0 38.9 23.4 59.4 39.1 73.1l1.1 1C232.5 112.3 240 119.9 240 136c0 13.3 10.7 24 24 24s24-10.7 24-24c0-38.9-23.4-59.4-39.1-73.1l-1.1-1C231.5 47.7 224 40.1 224 24z"/></svg>';
 
+  const svgIconSubtaskPlus =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#beb69850" d="M64 80c-8.8 0-16 7.2-16 16V416c0 8.8 7.2 16 16 16H384c8.8 0 16-7.2 16-16V96c0-8.8-7.2-16-16-16H64zM0 96C0 60.7 28.7 32 64 32H384c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM200 344V280H136c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H248v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>';
+
+  const svgIconSubtaskMinus =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#beb69880" d="M64 80c-8.8 0-16 7.2-16 16V416c0 8.8 7.2 16 16 16H384c8.8 0 16-7.2 16-16V96c0-8.8-7.2-16-16-16H64zM0 96C0 60.7 28.7 32 64 32H384c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM152 232H296c13.3 0 24 10.7 24 24s-10.7 24-24 24H152c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>';
+
   // ==================== STATE ====================
   // decodeURIComponent is necessary for leagues separated by /
   const state = {
@@ -72,8 +78,23 @@
     }
   };
 
-  const updateState = data => {
-    const { sideNotes, defaultTags } = data;
+  const updateCurrentState = data => {
+    const { sideNotes, defaultTags, hideCompleted } = data;
+    if (hideCompleted === false || hideCompleted === true) {
+      state.hideCompleted = hideCompleted;
+      const challengeContainerEl = document.querySelector(
+        '.achievement-container'
+      );
+      const sideNotesEl = document.querySelector('.side-notes');
+      if (state.hideCompleted) {
+        challengeContainerEl.classList.add('hide-completed');
+        sideNotesEl.classList.add('hide-completed');
+      } else {
+        challengeContainerEl.classList.remove('hide-completed');
+        sideNotesEl.classList.remove('hide-completed');
+      }
+      updateTagsDropdownHTML();
+    }
     if (sideNotes) {
       state.sideNotes.hide = sideNotes.hide;
       state.sideNotes.side = sideNotes.side;
@@ -116,14 +137,17 @@
     }
   };
 
-  const getStateFromChromeStorage = keys => {
+  const getStateFromChromeStorage = () => {
     // Request data from background script
     chrome.runtime.sendMessage(
-      { action: 'getData', dataKeys: [...keys] },
+      {
+        action: 'getData',
+        dataKeys: [state.league, 'sideNotes', 'defaultTags', 'hideCompleted'],
+      },
       function (response) {
         // Handle the retrieved data
         if (response?.data) {
-          updateState(response.data);
+          updateCurrentState(response.data);
         } else {
           console.log('Data not found.');
           return null;
@@ -139,41 +163,6 @@
       set1.delete(el);
     }
     return set1;
-  };
-
-  const getStateFromStorage = () => {
-    let poeLS = localStorage.getItem('poe');
-    if (poeLS) {
-      const poeStateLS = JSON.parse(poeLS);
-      if (!poeStateLS[state.league]) {
-        //if has poe but not currently selected league league
-        state.leagueStateGotLoaded = false;
-      } else {
-        state.leagueStateGotLoaded = true;
-        const leagueStateLS = poeStateLS[state.league];
-        const { challsArrayLS } = leagueStateLS;
-        if (challsArrayLS) {
-          const challsArray = JSON.parse(challsArrayLS);
-          state.challObjMap = new Map(challsArray);
-          saveItemToStorage(state.league, { challenges: challsArray });
-        }
-
-        // fallback for user who don't have notes state saved in LS
-        if (poeStateLS.hideNotes) {
-          state.sideNotes.hide =
-            poeStateLS.hideNotes === 'false' ? false : true;
-          saveItemToStorage(
-            'sideNotes',
-            poeStateLS.hideNotes === 'false'
-              ? { hide: false, side: state.sideNotes.side }
-              : { hide: true, side: state.sideNotes.side }
-          );
-        }
-      }
-      localStorage.removeItem('poe');
-    } else {
-      getStateFromChromeStorage([state.league, 'sideNotes', 'defaultTags']);
-    }
   };
 
   const getCoords = elem => {
@@ -291,6 +280,13 @@
       '<dialog class="menu-dialog"></dialog>'
     );
     return parentEl.querySelector('.menu-dialog');
+  };
+
+  const insertSubtaskButton = parentEl => {
+    parentEl.insertAdjacentHTML(
+      'afterbegin',
+      `<div class="subtask-icon plus">${svgIconSubtaskPlus}</div><div class="subtask-icon minus">${svgIconSubtaskMinus}</div>`
+    );
   };
 
   // using this method because {element.innerHTML = ''}doesn't clear event handlers of the child nodes and might cause memory leak
@@ -606,6 +602,7 @@
       challengeContainerEl.classList.remove('hide-completed');
       sideNotesEl.classList.remove('hide-completed');
     }
+    saveItemToStorage('hideCompleted', state.hideCompleted);
     updateTagsDropdownHTML();
   };
 
@@ -768,6 +765,10 @@
     const taskList = challEl.querySelector('.items');
     if (taskList) {
       insertNoteTextareaEl(taskList, id);
+      const subtasks = taskList.querySelectorAll('li');
+      for (let subtask of subtasks) {
+        insertSubtaskButton(subtask);
+      }
     } else {
       const detailInnerEl = challEl.querySelector('.detail-inner');
       detailEl.querySelector('.text').classList.add('inner-block');
@@ -853,6 +854,19 @@
     }));
   };
 
+  const getSubtaskStatesFromText = challEl => {
+    const subtasksNew = [...challEl.querySelectorAll('.items ul li')].map(
+      (li, index) => {
+        li.dataset.id = index;
+        return li.classList.contains('finished')
+          ? { isComplete: true, pinned: false }
+          : { isComplete: false, pinned: false };
+      }
+    );
+
+    return subtasksNew;
+  };
+
   const createChallObj = (id, challEl) => {
     const challText = getChallengeSearchChars(challEl);
     const challDefaultTags = getDefaultTagsFromText(challText);
@@ -935,6 +949,36 @@
     for (let tagObj of challObj.tags) {
       state[`${tagObj.type}TagsSet`].add(tagObj.name);
     }
+
+    const subtasksNew = getSubtaskStatesFromText(challEl);
+    if (!challObj?.subtasks || challObj.subtasks.length === 0) {
+      challObj.subtasks = subtasksNew;
+    } else {
+      for (let i = 0; i < challObj.subtasks.length; i++) {
+        const subtaskObj = challObj.subtasks[i];
+        subtaskObj.isComplete = subtasksNew[i].isComplete;
+        const challId = Number(challEl.dataset.id);
+        const subtaskId = i;
+        const subtaskEl = challEl.querySelector(
+          `.items li[data-id="${subtaskId}"]`
+        );
+        if (subtaskObj.pinned === true) {
+          subtaskEl.classList.add('sub-pinned');
+        } else if (subtaskObj.pinned === false) {
+          subtaskEl.classList.remove('sub-pinned');
+        }
+        if (subtaskObj.pinned) {
+          pinSubtask(
+            subtaskEl.textContent,
+            challId,
+            subtaskId,
+            true,
+            subtaskObj.isComplete
+          );
+        }
+      }
+    }
+
     const tagInputEl = challEl.querySelector('.input-tag');
     const tagDisplayEl = challEl.querySelector('.display-tag');
     const tagsString = challObj.tags.map(tagObj => tagObj.name).join(', ');
@@ -1060,6 +1104,41 @@
     });
   };
 
+  const pinSubtask = (
+    subtaskText,
+    challId,
+    subtaskId,
+    isPinned,
+    isComplete
+  ) => {
+    const sideChallengeEl = document.querySelector(
+      `.side-challenge[data-id="${challId}"]`
+    );
+    if (isPinned) {
+      const sideChallengeNote = sideChallengeEl.querySelector('.side-note');
+      sideChallengeNote.insertAdjacentHTML(
+        'beforebegin',
+        `<div class="side-subtask ${
+          isComplete ? 'complete' : ''
+        }" data-id="${subtaskId}">&#9679; ${subtaskText}</div>`
+      );
+      const subtasks = sideChallengeEl.querySelectorAll('.side-subtask');
+      const subtasksSorted = [...subtasks].sort(
+        (subA, subB) => Number(subA.dataset.id) - Number(subB.dataset.id)
+      );
+      for (let subtaskEl of subtasks) {
+        subtaskEl.remove();
+      }
+      for (let subtaskEl of subtasksSorted) {
+        sideChallengeNote.insertAdjacentElement('beforebegin', subtaskEl);
+      }
+    } else {
+      sideChallengeEl
+        .querySelector(`.side-subtask[data-id="${subtaskId}"]`)
+        .remove();
+    }
+  };
+
   const delegateEventHandlers = () => {
     const challsContainerEl = document.querySelector('.achievement-list');
     challsContainerEl.addEventListener('change', event => {
@@ -1099,6 +1178,34 @@
         target.classList.contains('icon-pin')
       ) {
         pinChallengeHandler(event);
+      }
+
+      // pin subtask
+      if (
+        target.classList.contains('subtask-icon') ||
+        target.closest('div').classList.contains('subtask-icon')
+      ) {
+        const challId = Number(target.closest('div.achievement').dataset.id);
+        const subtaskEl = target.closest('.items li');
+        const subtaskId = Number(subtaskEl.dataset.id);
+        const challObj = state.challObjMap.get(challId);
+        const subtask = challObj.subtasks[subtaskId];
+        subtask.pinned = !subtask.pinned;
+        if (subtask.pinned) {
+          subtaskEl.classList.add('sub-pinned');
+        } else {
+          subtaskEl.classList.remove('sub-pinned');
+        }
+        pinSubtask(
+          subtaskEl.textContent,
+          challId,
+          subtaskId,
+          subtask.pinned,
+          subtask.isComplete
+        );
+        saveItemToStorage(state.league, {
+          challenges: Array.from(state.challObjMap),
+        });
       }
     });
   };
@@ -1199,7 +1306,7 @@
   };
 
   const init = () => {
-    getStateFromStorage();
+    getStateFromChromeStorage();
     processChallenges();
     changeTopLayout();
     createSideNotes();
