@@ -285,7 +285,7 @@
   const insertSubtaskButton = parentEl => {
     parentEl.insertAdjacentHTML(
       'afterbegin',
-      `<div class="subtask-icon plus">${svgIconSubtaskPlus}</div><div class="subtask-icon minus">${svgIconSubtaskMinus}</div>`
+      `<div class="subtask-icon plus" title="pin subtask to the sidenotes">${svgIconSubtaskPlus}</div><div class="subtask-icon minus" title="unpin subtask from the sidenotes">${svgIconSubtaskMinus}</div>`
     );
   };
 
@@ -393,12 +393,12 @@
     selectEl.selectedIndex = selectedTagIndex;
   };
 
-  const updateSideNote = (noteID, newText) => {
+  const updateSideNote = (noteID, newText = '', hasSubtasks = false) => {
     const noteEl = document.querySelector(`.side-note[data-id="${noteID}"]`);
     noteEl.textContent = newText;
-    if (newText.length) {
+    if (newText.length || hasSubtasks) {
       noteEl.closest('.side-challenge').classList.remove('hidden');
-    } else {
+    } else if (!newText.length && !hasSubtasks) {
       noteEl.closest('.side-challenge').classList.add('hidden');
     }
   };
@@ -934,7 +934,7 @@
     challObj.searchChars = challText;
     const noteTextareaEl = challEl.querySelector('.note-textarea');
     noteTextareaEl.value = challObj.note;
-    updateSideNote(id, challObj.note);
+
     const newDefaultTags = getDefaultTagsFromText(challText);
     challObj.defaultTags = newDefaultTags;
     if (state.defaultTagsChanged) {
@@ -978,6 +978,12 @@
         }
       }
     }
+
+    updateSideNote(
+      id,
+      challObj.note,
+      challObj.subtasks.some(subtask => subtask.pinned)
+    );
 
     const tagInputEl = challEl.querySelector('.input-tag');
     const tagDisplayEl = challEl.querySelector('.display-tag');
@@ -1202,6 +1208,11 @@
           subtaskId,
           subtask.pinned,
           subtask.isComplete
+        );
+        updateSideNote(
+          challId,
+          challObj.note,
+          challObj.subtasks.some(subtask => subtask.pinned)
         );
         saveItemToStorage(state.league, {
           challenges: Array.from(state.challObjMap),
