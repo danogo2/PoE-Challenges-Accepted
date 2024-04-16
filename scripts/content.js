@@ -1070,9 +1070,13 @@
     const formattedNote = textareaEl.value.trim();
     textareaEl.value = formattedNote;
     const id = Number(textareaEl.dataset.id);
-    const chall = state.challObjMap.get(id);
-    chall.note = formattedNote;
-    updateSideNote(id, formattedNote);
+    const challObj = state.challObjMap.get(id);
+    challObj.note = formattedNote;
+    updateSideNote(
+      id,
+      formattedNote,
+      challObj.subtasks.some(subtask => subtask.pinned)
+    );
     saveItemToStorage(state.league, {
       challenges: Array.from(state.challObjMap),
     });
