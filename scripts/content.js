@@ -470,9 +470,7 @@
         'beforeend',
         `<li class="side-challenge ${note.length ? '' : 'hidden'} ${
           isComplete ? 'complete' : 'incomplete'
-        }" data-id="${id}"><h3 class="side-challenge-header" title="scroll to challenge" data-id="${id}"><span class="side-challenge-header--text">${name}</span><div class="goto-container"><div class="icon-goto">${svgIconArrowGoTo}</div></div><div class="note-completion"><span class="note-progress">${completionProgress}</span><span class="note-completion-check">${
-          isComplete ? '✓' : '⨉'
-        }</span></div></h3><div class="side-note" data-id="${id}">${note}</div></li>`
+        }" data-id="${id}"><h3 class="side-challenge-header" title="scroll to challenge" data-id="${id}"><span class="side-challenge-header--text">${name}</span><div class="goto-container"><div class="icon-goto">${svgIconArrowGoTo}</div></div><div class="note-completion"><span class="note-progress">${completionProgress}</span></div></h3><div class="side-note" data-id="${id}">${note}</div></li>`
       );
     }
     document

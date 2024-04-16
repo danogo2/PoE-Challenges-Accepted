@@ -341,8 +341,12 @@ option.tag-custom {
   gap: 10px;
 }
 
-.note-completion-check {
-  width: 10px;
+.note-progress {
+  color: #a93226;
+}
+
+li.complete .note-progress {
+  color: rgba(0, 213, 0, 0.8);
 }
 
 /* hide toggle button */
