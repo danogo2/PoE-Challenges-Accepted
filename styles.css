@@ -285,7 +285,8 @@ option.tag-custom {
   display: none;
 }
 
-.hide-completed .side-challenges:has(> .incomplete:not(.hidden)) {
+.hide-completed:not(.hide-notes)
+  .side-challenges:has(> .incomplete:not(.hidden)) {
   display: list-item;
 }
 
