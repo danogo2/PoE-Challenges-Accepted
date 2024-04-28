@@ -639,6 +639,7 @@
     document.querySelector('.container').classList.add('poe-ca');
     document.querySelector('.btn-show-achievements').remove();
     const titleEl = document.querySelector('.title-bar');
+    const showcasePin = titleEl.querySelector('a.showcase-pin');
     const infoEl = document.querySelector('.profile .info');
     const leagueSelectEl = document.querySelector('.challenge-list.poeForm');
     leagueSelectEl.classList.add('settings-option');
@@ -651,6 +652,7 @@
     const searchInputEl = insertSearchInputEl(settingsEl);
     const tagSelectEl = insertTagSelectEl(settingsEl);
     settingsEl.insertAdjacentElement('beforeend', leagueSelectEl);
+
     settingsEl.insertAdjacentHTML(
       'beforeend',
       '<div class="settings-option title-container"></div>'
@@ -658,6 +660,20 @@
     settingsEl
       .querySelector('.title-container')
       .insertAdjacentElement('beforeend', titleEl);
+
+    if (showcasePin) {
+      showcasePin.setAttribute('title', 'pin challenges to Overview');
+      const titleContainer = settingsEl.querySelector('.title-container');
+
+      titleContainer.insertAdjacentHTML(
+        'afterbegin',
+        '<div class="settings-option showcase-pin-container"></div>'
+      );
+      settingsEl
+        .querySelector('.showcase-pin-container')
+        .insertAdjacentElement('beforeend', showcasePin);
+      titleContainer.style.justifyContent = 'space-between';
+    }
     const hideButtonEl = insertHideButtonEl(settingsEl);
     const menuButtonEl = insertMenuButtonEl(settingsEl);
     const menuDialogEl = insertMenuDialogEl(settingsEl);

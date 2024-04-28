@@ -66,6 +66,22 @@
   display: none;
 }
 
+.profile .settings .showcase-pin.add {
+  margin: 0;
+  height: 100%;
+  background-position: center;
+}
+
+.profile .settings .showcase-pin.add:hover {
+  filter: brightness(0.85);
+}
+
+.showcase-pin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* sticky nav */
 
 .stickyOffsetMargin {
