@@ -8,7 +8,7 @@
   height: 30px;
 }
 
-.poe-ca .profile .title-bar {
+.poe-ca .profile .progress {
   display: inline-block;
   align-self: center;
   margin: 0;
@@ -24,14 +24,17 @@
   font-weight: bold;
 }
 
-.poe-ca .profile .title-bar::first-letter {
-  text-transform: uppercase;
+.poe-ca .profile .title-bar {
+  margin: 0;
 }
 
-.poe-ca .challenge-list.poeForm form,
-.poe-ca .challenge-list.poeForm form select {
+.poe-ca .poeForm {
+  gap: 10px;
+}
+
+.poe-ca .poeForm,
+.poe-ca .poeForm select {
   height: 100%;
-  max-width: 160px;
 }
 
 .poe-ca .profile .profile-container,
@@ -82,13 +85,17 @@
   align-items: center;
 }
 
+.info {
+  display: none;
+}
+
 /* sticky nav */
 
 .stickyOffsetMargin {
   padding-top: 39px;
 }
 
-.info.sticky {
+.settings.sticky {
   position: fixed;
   top: 0;
   z-index: 1;
@@ -149,7 +156,8 @@
 }
 
 .tag-select,
-.league-select {
+.league-select,
+.realm-select {
   cursor: pointer;
 }
 
@@ -165,7 +173,7 @@ option.tag-custom {
   color: rgb(190, 182, 152);
 }
 
-.title-container {
+.progress-container {
   display: flex;
   justify-content: flex-end;
 }

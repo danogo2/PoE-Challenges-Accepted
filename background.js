@@ -1,8 +1,10 @@
 // Listen for messages from content scripts
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === 'getData') {
+    const requestDataKeys = [...request.dataKeys];
+    const { realm, league } = requestDataKeys.shift();
     // Retrieve data from local storage
-    chrome.storage.local.get([...request.dataKeys], function (items) {
+    chrome.storage.local.get([league, ...requestDataKeys], function (items) {
       // Send the retrieved data back to the content script
       sendResponse({ data: items });
     });

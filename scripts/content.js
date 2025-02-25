@@ -53,6 +53,9 @@
     defaultTagsChanged: false,
     defaultTagsSet: new Set(), // currently available in a league, not all from array below
     customTagsSet: new Set(),
+    realm: decodeURIComponent(
+      document.querySelector('select[name="realm"]').value
+    ),
     league: decodeURIComponent(
       document.querySelector('select[name="season"]').value
     ),
@@ -142,7 +145,12 @@
     chrome.runtime.sendMessage(
       {
         action: 'getData',
-        dataKeys: [state.league, 'sideNotes', 'defaultTags', 'hideCompleted'],
+        dataKeys: [
+          { realm: state.realm, league: state.league },
+          'sideNotes',
+          'defaultTags',
+          'hideCompleted',
+        ],
       },
       function (response) {
         // Handle the retrieved data
@@ -606,7 +614,7 @@
 
   const clickClearButtonHandler = event => {
     const hasConfirmed = confirm(
-      `Clear tags and notes for ${state.league} league?`
+      `Clear tags and notes for ${state.realm} ${state.league} league?`
     );
     if (hasConfirmed) {
       const keysToDelete = [state.league];
@@ -638,42 +646,38 @@
   const changeTopLayout = () => {
     document.querySelector('.container').classList.add('poe-ca');
     document.querySelector('.btn-show-achievements').remove();
+    const contentContainer = document.querySelector('.container-content');
+    contentContainer.insertAdjacentHTML(
+      'afterbegin',
+      '<div class="settings"></div>'
+    );
+    const settingsEl = contentContainer.querySelector('.settings');
+    // original title-bar changing
     const titleEl = document.querySelector('.title-bar');
-    const showcasePin = titleEl.querySelector('a.showcase-pin');
+    titleEl.classList.add('settings-option');
+    titleEl.querySelector('h2').remove();
+    const realmAndLeagueFormEl = document.querySelector('form.poeForm');
+    const leagueSelectContainerEl =
+      realmAndLeagueFormEl.querySelector('.challenge-list');
+    const leagueSelectEl = leagueSelectContainerEl.querySelector('select');
+    leagueSelectEl.classList.add('league-select');
+    const realmSelectContainerEl =
+      realmAndLeagueFormEl.querySelector('.realm-list');
+    const realmSelectEl = realmSelectContainerEl.querySelector('select');
+    realmSelectEl.classList.add('realm-select');
+    // original info changing
     const infoEl = document.querySelector('.profile .info');
-    const leagueSelectEl = document.querySelector('.challenge-list.poeForm');
-    leagueSelectEl.classList.add('settings-option');
-    leagueSelectEl.querySelector('select').classList.add('league-select');
-    titleEl.textContent = `${infoEl.textContent}`;
-    infoEl.textContent = '';
-    infoEl.insertAdjacentHTML('beforeend', '<div class="settings"></div>');
-    const settingsEl = infoEl.querySelector('.settings');
-    titleEl.textContent = titleEl.textContent.match(/\d+/g).join('/');
+    const progressText = infoEl.textContent.match(/\d+/g).join('/');
+
     const searchInputEl = insertSearchInputEl(settingsEl);
     const tagSelectEl = insertTagSelectEl(settingsEl);
-    settingsEl.insertAdjacentElement('beforeend', leagueSelectEl);
-
+    settingsEl.insertAdjacentElement('beforeend', titleEl);
     settingsEl.insertAdjacentHTML(
       'beforeend',
-      '<div class="settings-option title-container"></div>'
+      '<div class="settings-option progress-container"><div class="progress"></div></div>'
     );
-    settingsEl
-      .querySelector('.title-container')
-      .insertAdjacentElement('beforeend', titleEl);
+    settingsEl.querySelector('.progress').textContent = progressText;
 
-    if (showcasePin) {
-      showcasePin.setAttribute('title', 'pin challenges to Overview');
-      const titleContainer = settingsEl.querySelector('.title-container');
-
-      titleContainer.insertAdjacentHTML(
-        'afterbegin',
-        '<div class="settings-option showcase-pin-container"></div>'
-      );
-      settingsEl
-        .querySelector('.showcase-pin-container')
-        .insertAdjacentElement('beforeend', showcasePin);
-      titleContainer.style.justifyContent = 'space-between';
-    }
     const hideButtonEl = insertHideButtonEl(settingsEl);
     const menuButtonEl = insertMenuButtonEl(settingsEl);
     const menuDialogEl = insertMenuDialogEl(settingsEl);
@@ -1239,11 +1243,10 @@
     });
   };
 
-  const makeInfoNavSticky = () => {
+  const makeSettingsNavSticky = () => {
     // get coords relative to document (viewport + current scroll)
-
-    const container = document.querySelector('.achievement-container');
-    const nav = container.querySelector('.info');
+    const container = document.querySelector('.container-content');
+    const nav = container.querySelector('.settings');
     const containerCoords = getCoords(container);
     const containerTop = containerCoords.top;
 
@@ -1340,7 +1343,7 @@
     changeTopLayout();
     createSideNotes();
     delegateEventHandlers();
-    makeInfoNavSticky();
+    makeSettingsNavSticky();
   };
 
   init();
