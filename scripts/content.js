@@ -85,9 +85,7 @@
     const { sideNotes, defaultTags, hideCompleted } = data;
     if (hideCompleted === false || hideCompleted === true) {
       state.hideCompleted = hideCompleted;
-      const challengeContainerEl = document.querySelector(
-        '.achievement-container'
-      );
+      const challengeContainerEl = document.querySelector('.container-content');
       const sideNotesEl = document.querySelector('.side-notes');
       if (state.hideCompleted) {
         challengeContainerEl.classList.add('hide-completed');
